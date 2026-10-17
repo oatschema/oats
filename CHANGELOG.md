@@ -11,7 +11,7 @@ The launch release of OATS (Open Annotation Task Schemas).
 
 ### Added
 
-- `ranking`: an ordered list of items related to a query, such as search results, retrieved passages, reranker output, recommendations and near-duplicate matches. Each result has a `rank` (tied items share one), an `id` of up to 2048 characters (so it can hold a URI; the second exception to the 128-character identifier rule), and an optional normalized `score`.
+- `ranking`: a ranked list of items related to a query, such as search results, retrieved passages, reranker output, recommendations and near-duplicate matches. Each result has a `rank` (tied items share one), an `id` of up to 2048 characters (so it can hold a URI; the second exception to the 128-character identifier rule), and an optional normalized `score`.
 - `entity-extraction`: optional `relations` record directed links between entities, such as which price belongs to which line item. Relation labels can come from `relation_vocabulary` or `relation_vocabulary_url`. When `relations` is not empty, every entity requires an `id`.
 
 ### Changed

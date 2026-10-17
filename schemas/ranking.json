@@ -8,7 +8,7 @@
     "$id": "https://oatschema.org/0.8.0/ranking",
     "title": "Ranking",
     "x-version": "0.8.0",
-    "description": "Represent an ordered list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches.",
+    "description": "Represent a ranked list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches.",
     "type": "object",
     "properties": {
         "target": {
