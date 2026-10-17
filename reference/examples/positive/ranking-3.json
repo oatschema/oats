@@ -2,6 +2,7 @@
   "target": "recording-match",
   "producer": "Chromaprint 1.5 + AcoustID",
   "collection": "musicbrainz-recordings",
+  "score_explanation": "AcoustID match score.",
   "results": [
     {
       "rank": 1,

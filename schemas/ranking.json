@@ -38,7 +38,7 @@
         },
         "total_candidates": {
             "type": "integer",
-            "description": "The number of candidates considered before the list was cut down to 'results'. Must not be less than the number of results.",
+            "description": "The number of candidates considered before the list was cut down to 'results'. Must not be less than the number of results, or than any result's rank.",
             "minimum": 0
         },
         "results": {
@@ -51,12 +51,12 @@
                 "properties": {
                     "rank": {
                         "type": "integer",
-                        "description": "The position of this item, starting at 1 for the best match. Tied items share a rank. The order of the items is given by 'rank', not by their order in the array.",
+                        "description": "The position of this item in the full ranking, where 1 is the best match. Tied items share a rank, and gaps are allowed (e.g. after a tie, or when results are filtered or paginated). The order of the items is given by 'rank', not by their order in the array.",
                         "minimum": 1
                     },
                     "id": {
                         "type": "string",
-                        "description": "An identifier for the item, such as a document id within 'collection' or a URI that resolves to it.",
+                        "description": "An identifier for the item, such as a document id within 'collection' or a URI that resolves to it. Must be unique within 'results'.",
                         "maxLength": 2048
                     },
                     "title": {
@@ -66,7 +66,7 @@
                     },
                     "text": {
                         "type": "string",
-                        "description": "An excerpt of the item's text, such as a search snippet or a retrieved passage.",
+                        "description": "An excerpt of the item's text, such as a search snippet or a retrieved passage. May be truncated; 'id' identifies the full item.",
                         "maxLength": 4096
                     },
                     "score": {

@@ -4,6 +4,7 @@
   "response_data": "{\"invoice_id\": \"INV-9528\", \"total_due\": 1450.75, \"due_date\": \"2025-10-31\"}",
   "language": "eng",
   "score": 0.95,
+  "score_explanation": "Extraction accuracy, from -1.0 (wrong) to 1.0 (correct).",
   "generation_params": {
     "system_prompt": "You are an expert financial document parser. You must only output a valid JSON object.",
     "temperature": 0.0,

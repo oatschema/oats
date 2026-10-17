@@ -3,7 +3,7 @@
   "producer": "text-embedding-3-small",
   "query": "How much notice is needed to end the lease?",
   "collection": "lease-agreements",
-  "score_explanation": "Cosine similarity",
+  "score_explanation": "Cosine similarity.",
   "results": [
     {
       "rank": 1,

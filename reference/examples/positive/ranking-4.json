@@ -3,7 +3,7 @@
   "producer": "bge-reranker-v2-m3",
   "query": "waterproof trail running shoes",
   "collection": "products",
-  "score_explanation": "Sigmoid of the reranker logit",
+  "score_explanation": "Sigmoid of the reranker logit.",
   "total_candidates": 100,
   "results": [
     {
