@@ -100,7 +100,7 @@ Represent objects detected within a file, supporting bounding boxes, polygons, m
 * [**View Example Record**](./reference/examples/positive/object-detection-1.json)
 
 ### `ranking`
-Represent an ordered list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches. Each result carries a rank, an identifier and an optional normalized score.
+Represent a ranked list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches. Each result carries a rank, an identifier and an optional normalized score.
 * [**View Schema**](./schemas/ranking.json)
 * [**View Example Record**](./reference/examples/positive/ranking-1.json)
 
