@@ -28,7 +28,7 @@
         },
         "collection": {
             "type": "string",
-            "description": "The name of the collection or index that was searched (e.g., 'lease-agreements').",
+            "description": "The name of the set the ranked items were drawn from, such as a search index, document collection or product catalogue (e.g., 'lease-agreements').",
             "maxLength": 1024
         },
         "score_explanation": {
@@ -66,7 +66,7 @@
                     },
                     "text": {
                         "type": "string",
-                        "description": "A snippet of the item, or the passage that was retrieved.",
+                        "description": "An excerpt of the item's text, such as a search snippet or a retrieved passage.",
                         "maxLength": 4096
                     },
                     "score": {
