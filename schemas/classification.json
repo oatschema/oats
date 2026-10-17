@@ -45,7 +45,7 @@
         },
         "labels": {
             "type": "array",
-            "description": "An array of labels applied to the file. Can be empty if no labels match.",
+            "description": "The labels assigned. Can be empty if no labels match.",
             "maxItems": 10000,
             "minItems": 0,
             "items": {

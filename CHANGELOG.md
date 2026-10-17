@@ -22,6 +22,7 @@ The launch release of OATS (Open Annotation Task Schemas).
 ### Fixed
 
 - `document-extraction`: the `page_width` and `page_height` descriptions no longer imply that page sizes must be in `px` or `pt` when `unit` is `normalized` or `per_mille`.
+- Descriptions no longer assume a record is attached to a file or annotation: `classification.labels`, `object-detection.objects` (and an object's `id` and `score`), and `track_id` in `audio-transcription` and `temporal-segmentation`.
 
 ## v0.7.0 (2026-10-14)
 

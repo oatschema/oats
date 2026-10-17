@@ -8,7 +8,7 @@
     "$id": "https://oatschema.org/0.8.0/ranking",
     "title": "Ranking",
     "x-version": "0.8.0",
-    "description": "Represent an ordered list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches. When no query is given, the query is the annotated item itself.",
+    "description": "Represent an ordered list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches.",
     "type": "object",
     "properties": {
         "target": {
@@ -23,7 +23,7 @@
         },
         "query": {
             "type": "string",
-            "description": "The text query, if there was one. When absent, the query is the annotated item itself.",
+            "description": "The text of the query, if there was one. Omitted when there was no text query (e.g. near-duplicates of a given image, or recommendations for a user).",
             "maxLength": 4096
         },
         "collection": {

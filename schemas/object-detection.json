@@ -50,7 +50,7 @@
         },
         "objects": {
             "type": "array",
-            "description": "An array of objects detected within the file.",
+            "description": "The detected objects.",
             "maxItems": 100000,
             "items": {
                 "type": "object",
@@ -58,7 +58,7 @@
                 "properties": {
                     "id": {
                         "type": "string",
-                        "description": "A unique identifier for this object within the annotation (e.g., UUID4). Required for establishing hierarchies.",
+                        "description": "A unique identifier for this object within this record (e.g., UUID4). Required for establishing hierarchies.",
                         "maxLength": 128
                     },
                     "parent_id": {
@@ -73,7 +73,7 @@
                     },
                     "score": {
                         "type": "number",
-                        "description": "A normalized score for this detection (-1.0 to 1.0). Positive values [0, 1] represent confidence in the object's presence. Negative values [-1, 0) are reserved for 'hard negatives' (e.g., explicitly annotating that an object is not present in this region).",
+                        "description": "A normalized score for this detection (-1.0 to 1.0). Positive values [0, 1] represent confidence in the object's presence. Negative values [-1, 0) are reserved for 'hard negatives' (e.g., explicitly marking that an object is not present in this region).",
                         "minimum": -1,
                         "maximum": 1
                     },

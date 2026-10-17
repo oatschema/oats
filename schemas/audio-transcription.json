@@ -13,7 +13,7 @@
     "properties": {
         "track_id": {
             "type": "string",
-            "description": "(Optional) Identifier for the specific audio track or channel in the source file. Numeric identifiers are written as strings (e.g., '0').",
+            "description": "(Optional) Identifier for the specific audio track or channel in the source media. Numeric identifiers are written as strings (e.g., '0').",
             "maxLength": 128
         },
         "producer": {
