@@ -1,10 +1,10 @@
 # OATS
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Schemas: 11](https://img.shields.io/badge/Schemas-11-brightgreen.svg)](./schemas)
+[![Schemas: 12](https://img.shields.io/badge/Schemas-12-brightgreen.svg)](./schemas)
 [![Status](https://github.com/oatschema/oats/actions/workflows/ci.yml/badge.svg)](https://github.com/oatschema/oats/actions)
 
-**OATS** (Open Annotation Type Schemas) is a collection of strict, versioned JSON schemas, defining and validating the structured outputs of machine learning models, workflow steps and annotation tasks.
+**OATS** (Open Annotation Task Schemas) is a collection of strict, versioned JSON schemas, defining and validating the structured outputs of machine learning models, workflow steps and annotation tasks.
 
 It provides a **unified contract** for many common data engineering tasks, standardizing outputs whatever their source.
 
@@ -39,11 +39,11 @@ Because of our commitment to **Backward Compatibility**, from v1.0.0 upgrading t
     * **Major (v1.x -> v2.x):** Reserved for breaking changes. None are planned.
     * **Minor (v1.1 -> v1.2):** Non-breaking additions (e.g., adding an optional field or a new schema). This bumps the version for the entire package.
     * **Patch (v1.1.0 -> v1.1.1):** Bug fixes, description updates, or non-functional changes.
-* **Schema Metadata:** Every schema file contains a top-level `"version"` field matching the release it belongs to.
+* **Schema Metadata:** Every schema file contains a top-level `"x-version"` field matching the release it belongs to. Releases up to v0.7.0 used `"version"` instead, and keep it.
 
 ### Schema Identifiers
 
-Every schema's `$id` has the form `https://oatschema.org/<version>/<name>`, for example `https://oatschema.org/0.7.0/classification`. Because each release has its own `$id`s, several versions of a schema can be loaded into one JSON Schema registry side by side.
+Every schema's `$id` has the form `https://oatschema.org/<version>/<name>`, for example `https://oatschema.org/0.8.0/classification`. Because each release has its own `$id`s, several versions of a schema can be loaded into one JSON Schema registry side by side.
 
 The website also resolves two convenience forms:
 
@@ -75,7 +75,7 @@ Store a vector embedding, including the high-dimensional feature vector and meta
 * [**View Example Record**](./reference/examples/positive/embedding-dense.json)
 
 ### `entity-extraction`
-Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, or geometric regions) to normalized values and business concepts.
+Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, or geometric regions) to normalized values and business concepts, and can record directed relations between entities (e.g. which price belongs to which line item).
 * [**View Schema**](./schemas/entity-extraction.json)
 * [**View Example Record**](./reference/examples/positive/entity-extraction-1.json)
 
@@ -98,6 +98,11 @@ Store the full context of a single atomic Large Language Model (LLM) interaction
 Represent objects detected within a file, supporting bounding boxes, polygons, multi-polygons, hierarchical relationships (parent/child), and normalized scoring.
 * [**View Schema**](./schemas/object-detection.json)
 * [**View Example Record**](./reference/examples/positive/object-detection-1.json)
+
+### `ranking`
+Represent an ordered list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches. Each result carries a rank, an identifier and an optional normalized score.
+* [**View Schema**](./schemas/ranking.json)
+* [**View Example Record**](./reference/examples/positive/ranking-1.json)
 
 ### `regression`
 Represent continuous numerical predictions. Supports point estimates, confidence intervals, and time-series forecasting.
@@ -165,4 +170,4 @@ Please read our `CONTRIBUTING.md` guide for the full process, but the general wo
 
 ## License
 
-The schemas, examples, and documentation in this repository are licensed under the **Apache 2.0 License**.
+The schemas, examples, and documentation in this repository are licensed under the **Apache 2.0 License**. Copyright is held by [The OATS Authors](./AUTHORS).

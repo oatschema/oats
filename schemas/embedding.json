@@ -1,13 +1,13 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/embedding",
+    "$id": "https://oatschema.org/0.8.0/embedding",
     "title": "Embedding",
-    "version": "0.7.0",
+    "x-version": "0.8.0",
     "description": "Store a vector and (optionally) the algorithm or embedding model which generated it. Supports both array (dense) and object (sparse) representations.",
     "type": "object",
     "properties": {

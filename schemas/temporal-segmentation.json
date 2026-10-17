@@ -1,13 +1,13 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/temporal-segmentation",
+    "$id": "https://oatschema.org/0.8.0/temporal-segmentation",
     "title": "Temporal Segmentation",
-    "version": "0.7.0",
+    "x-version": "0.8.0",
     "description": "Represent labelled time intervals within a media source, such as chapters, scenes, shots, speaker turns or detected events. Segments may overlap, may nest, and need not cover the whole source.",
     "type": "object",
     "properties": {
@@ -164,39 +164,6 @@
     },
     "required": [
         "segments"
-    ],
-    "allOf": [
-        {
-            "if": {
-                "properties": {
-                    "segments": {
-                        "maxItems": 0
-                    }
-                },
-                "required": [
-                    "segments"
-                ]
-            },
-            "then": {
-                "anyOf": [
-                    {
-                        "required": [
-                            "vocabulary"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "vocabulary_url"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "producer"
-                        ]
-                    }
-                ]
-            }
-        }
     ],
     "additionalProperties": false
 }

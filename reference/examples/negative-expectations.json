@@ -87,6 +87,14 @@
     "path": "/entities/0/location/0",
     "message": "is not valid under any of the schemas"
   },
+  "entity-extraction-relation-missing-subject.json": {
+    "path": "/relations/0",
+    "message": "\"subject_id\" is a required property"
+  },
+  "entity-extraction-relations-without-entity-id.json": {
+    "path": "/entities/1",
+    "message": "\"id\" is a required property"
+  },
   "entity-extraction-score-out-of-range.json": {
     "path": "/entities/0/score",
     "message": "is greater than the maximum"
@@ -135,10 +143,6 @@
     "path": "",
     "message": "\"model\" is a required property"
   },
-  "object-detection-empty-without-context.json": {
-    "path": "",
-    "message": "is not valid under any of the schemas"
-  },
   "object-detection-invalid-polygon.json": {
     "path": "/objects/0/polygon",
     "message": "has less than"
@@ -151,9 +155,21 @@
     "path": "/objects/0/attributes/metadata",
     "message": "is not valid under any of the schemas"
   },
+  "ranking-missing-id.json": {
+    "path": "/results/0",
+    "message": "\"id\" is a required property"
+  },
+  "ranking-rank-zero.json": {
+    "path": "/results/0/rank",
+    "message": "is less than the minimum"
+  },
   "regression-bad-statistic.json": {
     "path": "/points/0/statistic",
     "message": "is not one of"
+  },
+  "regression-empty-points.json": {
+    "path": "/points",
+    "message": "has less than"
   },
   "regression-invalid-quantile.json": {
     "path": "/points/0/quantile_level",
@@ -174,10 +190,6 @@
   "temporal-segmentation-duplicate-vocabulary.json": {
     "path": "/vocabulary",
     "message": "has non-unique elements"
-  },
-  "temporal-segmentation-empty-without-context.json": {
-    "path": "",
-    "message": "is not valid under any of the schemas"
   },
   "temporal-segmentation-integer-group-id.json": {
     "path": "/segments/0/group_id",

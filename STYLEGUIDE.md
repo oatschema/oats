@@ -89,7 +89,7 @@ Depending on the schema, it may also make sense to add attributes to individual 
 
 Identifier fields (`id`, and any field ending in `_id` such as `parent_id` or `track_id`) are strings with a `maxLength` of 128. Write numeric identifiers as strings (`"0"`, not `0`).
 
-**Rationale**: Identifiers are compared for equality, often across fields (`parent_id` must match some `id`). Mixing types would leave it unclear whether `0` matches `"0"`, and would stop a field from being stored in a single typed column. The one exception is `geolocation`'s feature `id`, which follows RFC 7946.
+**Rationale**: Identifiers are compared for equality, often across fields (`parent_id` must match some `id`). Mixing types would leave it unclear whether `0` matches `"0"`, and would stop a field from being stored in a single typed column. There are two exceptions: `geolocation`'s feature `id`, which follows RFC 7946, and `ranking`'s result `id`, which allows 2048 characters because it may hold a URI that resolves to the item.
 
 ```json
 "group_id": {
@@ -101,14 +101,14 @@ Identifier fields (`id`, and any field ending in `_id` such as `parent_id` or `t
 
 #### Scores & Confidence
 
-Unless the schema is for a domain with its own established constraints for model scoring, prefer a field named `score` whose value is a normalized float:
+Unless the schema is for a domain with its own established constraints for model scoring, prefer a field named `score` whose value is a normalized float. Choose its range by what the score measures:
 
-| Type | Bounds | Semantics | Use Case |
-| :--- | :--- | :--- | :--- |
-| **Strict Probability** | `0.0` to `1.0` | 0 is "Uncertain/Absent", 1 is "Certain/Present". | Extraction, OCR, ASR. |
-| **Bipolar Metric** | `-1.0` to `1.0` | Negative is "Reject/Bad", 0 is "Neutral", Positive is "Accept/Good". | Sentiment, RLHF, Classification. |
+| Type | Bounds | Semantics | Use for | Schemas |
+| :--- | :--- | :--- | :--- | :--- |
+| **Strict Probability** | `0.0` to `1.0` | 0 is "Uncertain/Absent", 1 is "Certain/Present". | Confidence that one extracted or detected item is correct. | `audio-transcription`, `document-extraction`, `entity-extraction` (entities and relations), `temporal-segmentation` |
+| **Bipolar Metric** | `-1.0` to `1.0` | Negative is "Reject/Bad", 0 is "Neutral", Positive is "Accept/Good". Higher values are always better. | A judgement whose meaning depends on the producer, such as a probability, sentiment, reward, similarity or hard negative. | `classification`, `llm-output`, `object-detection`, `ranking`, `regression` |
 
-  *If using the Bipolar Metric, you should include a `score_explanation` field to clarify the semantics.*
+Every schema with a `score` has a root `score_explanation` field that states what the score means for a record. The tests require the field in any schema that uses the Bipolar Metric, where a score of 0.5 could mean several different things.
 
 Example:
 
@@ -123,7 +123,13 @@ Example:
 
 #### Vocabularies
 
-Schemas with labels (`classification`, `entity-extraction`, `object-detection`, `temporal-segmentation`) accept an inline `vocabulary` of up to 100 unique labels, or a `vocabulary_url` for anything larger. A vocabulary is repeated in every record, so a large inline one multiplies across a dataset. At 100 labels of up to 128 characters, it adds roughly 13 KB of ASCII text to each record.
+Schemas with labels (`classification`, `entity-extraction`, `object-detection`, `temporal-segmentation`) accept an inline `vocabulary` of up to 100 unique labels, or a `vocabulary_url` for anything larger. `entity-extraction` relations follow the same pattern with `relation_vocabulary` and `relation_vocabulary_url`. A vocabulary is repeated in every record, so a large inline one multiplies across a dataset. At 100 labels of up to 128 characters, it adds roughly 13 KB of ASCII text to each record.
+
+#### Empty Lists
+
+Some schemas allow their main list to be empty: `labels` in `classification`, `blocks` in `document-extraction`, `entities` in `entity-extraction`, `objects` in `object-detection`, `results` in `ranking` and `segments` in `temporal-segmentation`. An empty list should mean "checked and found nothing": no label applies, no object is present, nothing matched. A schema can't know what a producer intends by an empty list, but it allows one for that reason, so nothing else is required alongside it. Context fields such as `producer` and `vocabulary` stay optional, as they are everywhere else.
+
+Where an empty list can't mean "checked and found nothing", the schema forbids it with `minItems: 1`, for the same reason. A `regression` always predicts at least one value, so `points` can't be empty. An `audio-transcription` with no speech has an empty `text` rather than an empty list of `segments`.
 
 #### Geometry
 
@@ -153,9 +159,26 @@ Some rules relate two values, such as an end time that must not be earlier than 
 }
 ```
 
+#### Schema Metadata
+
+Non-standard keywords carry the `x-` prefix, so validators treat them as annotations. Every schema has two:
+
+* **`x-license`**: the licence of the schema file, in this form, where the end year is the year of the release:
+  ```json
+  "x-license": {
+      "id": "Apache-2.0",
+      "notice": "Copyright 2025-<year> The OATS Authors",
+      "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
+  }
+  ```
+  The tests hold the expected notice (`LICENSE` in `tests/test_schemas.py`) and check every schema against it.
+* **`x-version`**: the release the schema belongs to (e.g. `"0.8.0"`), equal to the `version` in `pyproject.toml` and to the version in the schema's `$id`.
+
+A schema must not contain a top-level `version` keyword. Releases up to v0.7.0 used `version` (and a Dorsal Hub LTD notice); released files are never edited, so they keep it. Tools that read a schema's version should read `x-version`, falling back to `version` for those older releases.
+
 #### Common Field Locations
 
-For readability and debugging purposes, common fields are in similar locations in each schema: `"x-license"` is always at the very top; it is followed by `"$schema"`, `"$id"`, `"title"`, `"version"` and `"description"`, all above `"properties"`; `"$defs"` comes after the validation keywords; and `"additionalProperties"` is always the last key of any object it constrains.
+For readability and debugging purposes, common fields are in similar locations in each schema: `"x-license"` is always at the very top; it is followed by `"$schema"`, `"$id"`, `"title"`, `"x-version"` and `"description"`, all above `"properties"`; `"$defs"` comes after the validation keywords; and `"additionalProperties"` is always the last key of any object it constrains.
 
 ### 3. Language Constraints
 

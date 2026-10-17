@@ -1,13 +1,13 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/llm-output",
+    "$id": "https://oatschema.org/0.8.0/llm-output",
     "title": "LLM Output",
-    "version": "0.7.0",
+    "x-version": "0.8.0",
     "description": "Store a single interaction with an LLM (a Prompt/Response pair). Captures the input prompt, the resulting output, and the configuration parameters used at that moment.",
     "type": "object",
     "properties": {

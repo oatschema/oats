@@ -1,7 +1,10 @@
+# SPDX-FileCopyrightText: 2025-2026 The OATS Authors
+# SPDX-License-Identifier: Apache-2.0
+
 [project]
 name = "oats"
-version = "0.7.0"
-description = "OATS (Open Annotation Type Schemas): reference schemas and test suite"
+version = "0.8.0"
+description = "OATS (Open Annotation Task Schemas): reference schemas and test suite"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []

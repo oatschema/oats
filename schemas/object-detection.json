@@ -1,13 +1,13 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/object-detection",
+    "$id": "https://oatschema.org/0.8.0/object-detection",
     "title": "Object Detection",
-    "version": "0.7.0",
+    "x-version": "0.8.0",
     "description": "Represent objects detected within a source. Supports bounding boxes, polygons, hierarchical relationships, and confidence scores.",
     "type": "object",
     "properties": {
@@ -250,37 +250,6 @@
         "objects"
     ],
     "allOf": [
-        {
-            "if": {
-                "properties": {
-                    "objects": {
-                        "maxItems": 0
-                    }
-                },
-                "required": [
-                    "objects"
-                ]
-            },
-            "then": {
-                "anyOf": [
-                    {
-                        "required": [
-                            "vocabulary"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "vocabulary_url"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "producer"
-                        ]
-                    }
-                ]
-            }
-        },
         {
             "if": {
                 "properties": {

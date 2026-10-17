@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025-2026 The OATS Authors
+# SPDX-License-Identifier: Apache-2.0
+
 import copy
 import json
 import tomllib
@@ -18,7 +21,7 @@ PACKAGE_VERSION = tomllib.loads((ROOT_DIR / "pyproject.toml").read_text())["proj
     "version"
 ]
 
-METADATA_KEYS = ("version", "description", "title", "x-license", "$id")
+METADATA_KEYS = ("version", "x-version", "description", "title", "x-license", "$id")
 UPPER_BOUNDS = ("maxLength", "maxItems", "maxProperties", "maxContains")
 LOWER_BOUNDS = ("minLength", "minItems", "minProperties", "minContains")
 JSON_TYPES = {

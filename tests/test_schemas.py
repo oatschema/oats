@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025-2026 The OATS Authors
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import tomllib
 from collections.abc import Iterator
@@ -12,10 +15,16 @@ PYPROJECT = REPO_ROOT / "pyproject.toml"
 
 PACKAGE_VERSION = tomllib.loads(PYPROJECT.read_text())["project"]["version"]
 ID_FORMAT = "https://oatschema.org/{version}/{name}"
-RESERVED_NAMES = {"docs", "latest"}
-ROOT_KEY_ORDER = ["x-license", "$schema", "$id", "title", "version", "description"]
+RESERVED_NAMES = {"changelog", "docs", "latest"}
+ROOT_KEY_ORDER = ["x-license", "$schema", "$id", "title", "x-version", "description"]
+LICENSE = {
+    "id": "Apache-2.0",
+    "notice": "Copyright 2025-2026 The OATS Authors",
+    "url": "https://github.com/oatschema/oats/blob/main/LICENSE",
+}
 OPEN_SCHEMAS = {"geolocation.json"}
 NON_STRING_IDENTIFIERS = {("geolocation.json", "#/properties/id")}
+LONG_IDENTIFIERS = {("ranking.json", "#/properties/results/items/properties/id"): 2048}
 SHARED_GEOMETRY_PARENTS: dict[str, tuple[str | int, ...]] = {
     "document-extraction.json": ("properties", "blocks", "items", "properties"),
     "entity-extraction.json": (
@@ -185,9 +194,15 @@ def style_violations(filename: str, schema: dict) -> list[str]:
             path.split("/")[-2:-1] == ["properties"]
             and (name == "id" or name.endswith("_id"))
             and (filename, path) not in NON_STRING_IDENTIFIERS
-            and (types != ["string"] or node.get("maxLength") != 128)
+            and (
+                types != ["string"]
+                or node.get("maxLength") != LONG_IDENTIFIERS.get((filename, path), 128)
+            )
         ):
-            errors.append(f"{path}: Identifiers must be strings with 'maxLength': 128.")
+            limit = LONG_IDENTIFIERS.get((filename, path), 128)
+            errors.append(
+                f"{path}: Identifiers must be strings with 'maxLength': {limit}."
+            )
         if (
             path.endswith("/properties/language")
             and node.get("pattern") != "^[a-z]{3}$"
@@ -266,8 +281,14 @@ def test_schema_adheres_to_style_guide(filename, schema):
 
 @pytest.mark.parametrize("filename, schema", SCHEMAS.items())
 def test_schema_metadata(filename, schema):
-    assert schema.get("version") == PACKAGE_VERSION, (
-        f"{filename}: version must match pyproject.toml ({PACKAGE_VERSION})"
+    assert schema.get("x-version") == PACKAGE_VERSION, (
+        f"{filename}: x-version must match pyproject.toml ({PACKAGE_VERSION})"
+    )
+    assert "version" not in schema, (
+        f"{filename}: use 'x-version'; a top-level 'version' is not allowed"
+    )
+    assert schema.get("x-license") == LICENSE, (
+        f"{filename}: x-license must be {LICENSE!r}"
     )
     expected_id = ID_FORMAT.format(version=PACKAGE_VERSION, name=Path(filename).stem)
     assert schema.get("$id") == expected_id, (
@@ -458,6 +479,14 @@ def test_shared_geometry_is_identical(field):
             {
                 "type": "object",
                 "properties": {"id": {"type": "integer"}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "long identifier outside the exemptions",
+            {
+                "type": "object",
+                "properties": {"id": {"type": "string", "maxLength": 2048}},
                 "additionalProperties": False,
             },
         ),
