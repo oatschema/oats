@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025-2026 The OATS Authors
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 from pathlib import Path
 

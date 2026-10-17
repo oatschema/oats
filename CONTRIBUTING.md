@@ -29,7 +29,7 @@ If you have an idea for a new, generic schema that would be valuable to the comm
 ## Pull Request Process
 
 1.  **Fork the repository** and create your branch from `main`.
-2.  **Add your new schema file** to the `/schemas` directory, following the `schema-name.json` naming convention. Name the schema after its task (e.g. `classification`, `object-detection`). A name must not start with a digit, and must not be `docs` or `latest`, because the website serves schema names and version numbers side by side.
+2.  **Add your new schema file** to the `/schemas` directory, following the `schema-name.json` naming convention. Name the schema after its task (e.g. `classification`, `object-detection`). A name must not start with a digit, and must not be `changelog`, `docs` or `latest`, because the website serves schema names, version numbers and its own pages side by side. Start the file with the standard `x-license` and `x-version` metadata described in the [Style Guide](./STYLEGUIDE.md#schema-metadata).
 3.  **Add Examples:** Examples are matched to schemas by filename prefix, so start every example's filename with the schema name.
     * Add at least one valid example to `reference/examples/positive/schema-name-1.json`.
     * Add at least one invalid example to `reference/examples/negative/schema-name-<what-it-breaks>.json` to demonstrate constraint enforcement. Each negative example should break exactly one rule.
@@ -44,8 +44,21 @@ If you have an idea for a new, generic schema that would be valuable to the comm
 
 ### Releasing (maintainers)
 
-1.  Bump `version` in `pyproject.toml`, the `"version"` field of every schema, and the version in every schema's `$id` (`https://oatschema.org/<version>/<name>`). The tests enforce that they match.
-2.  From v1.0.0, once the release is published, copy every file in `schemas/` to `reference/schemas/<released-version>/`. That snapshot becomes the baseline for the next release's backward-compatibility tests. Snapshots of v0.x releases are ignored by the tests.
+1.  Bump `version` in `pyproject.toml`, the `"x-version"` field of every schema, and the version in every schema's `$id` (`https://oatschema.org/<version>/<name>`). The tests enforce that they match. Add an entry to `CHANGELOG.md`, headed `## vX.Y.Z (YYYY-MM-DD)` with the release date.
+    * In the first release of a new year, also update the end year of the copyright notice: in every schema's `x-license`, in `LICENSE` in `tests/test_schemas.py`, and in the SPDX headers.
+2.  From v1.0.0, once the release is published, copy every file in `schemas/` to `reference/schemas/<released-version>/`. That snapshot becomes the baseline for the next release's backward-compatibility tests.
+
+## Licensing and Sign-off
+
+* Contributions are licensed under the [Apache License 2.0](./LICENSE), the same licence the project is distributed under. There is no CLA.
+* Contributors keep the copyright in their contributions. Copyright in OATS is held by [The OATS Authors](./AUTHORS); you may add yourself or your employer to `AUTHORS` in your pull request.
+* Every commit needs a [Developer Certificate of Origin](https://developercertificate.org/) sign-off. Add it with `git commit -s`, which appends a `Signed-off-by:` line.
+* New source files (Python, TOML, YAML) start with the two-line SPDX header, in the file type's comment syntax, where the end year is the current year:
+  ```
+  # SPDX-FileCopyrightText: 2025-<year> The OATS Authors
+  # SPDX-License-Identifier: Apache-2.0
+  ```
+  Schemas carry the `x-license` notice instead (see the [Style Guide](./STYLEGUIDE.md#schema-metadata)). JSON examples and Markdown files carry no header.
 
 ### Style Guide for Schemas
 

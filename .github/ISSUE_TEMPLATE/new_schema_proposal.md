@@ -1,18 +1,18 @@
 ---
 name: New Schema Proposal
-about: Propose a new open validation schema for a common use case
-title: 'Proposal: open/[new_schema_name]'
+about: Propose a new OATS schema for a common use case
+title: 'Proposal: [new-schema-name]'
 labels: 'enhancement, proposal'
 assignees: ''
 
 ---
 
 **Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. "I'm always extracting color palettes from images, but there is no standard `open` schema to store this information."
+A clear and concise description of what the problem is. Ex. "I'm always extracting color palettes from images, but there is no OATS schema to store this information."
 
 **Describe the Solution You'd Like**
 A clear and concise description of the new schema you are proposing. Please include:
-- The proposed name (e.g., `open/color-palette`).
+- The proposed name, named after the task (e.g., `color-palette`).
 - A brief description of its purpose.
 - A list of the key fields it would contain.
 

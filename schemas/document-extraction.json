@@ -1,13 +1,13 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/document-extraction",
+    "$id": "https://oatschema.org/0.8.0/document-extraction",
     "title": "Document Extraction",
-    "version": "0.7.0",
+    "x-version": "0.8.0",
     "description": "Represent the layout and content of a document, including text blocks, geometric coordinates, and page structure.",
     "type": "object",
     "properties": {
@@ -38,7 +38,7 @@
             ]
         },
         "page_width": {
-            "description": "The width of the page(s), expressed in the record's unit ('px' or 'pt'). Can be a single number for uniform documents, or an array of objects mapping specific widths to page numbers.",
+            "description": "The width of the page(s), in the record's unit if 'px' or 'pt', otherwise in any unit shared with page_height. Can be a single number for uniform documents, or an array of objects mapping specific widths to page numbers.",
             "oneOf": [
                 {
                     "type": "number",
@@ -81,7 +81,7 @@
             ]
         },
         "page_height": {
-            "description": "The height of the page(s), expressed in the record's unit ('px' or 'pt'). Can be a single number for uniform documents, or an array of objects mapping specific heights to page numbers.",
+            "description": "The height of the page(s), in the record's unit if 'px' or 'pt', otherwise in any unit shared with page_width. Can be a single number for uniform documents, or an array of objects mapping specific heights to page numbers.",
             "oneOf": [
                 {
                     "type": "number",

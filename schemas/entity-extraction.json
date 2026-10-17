@@ -1,14 +1,14 @@
 {
     "x-license": {
         "id": "Apache-2.0",
-        "notice": "Copyright 2025-2026 Dorsal Hub LTD",
+        "notice": "Copyright 2025-2026 The OATS Authors",
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.7.0/entity-extraction",
+    "$id": "https://oatschema.org/0.8.0/entity-extraction",
     "title": "Entity Extraction",
-    "version": "0.7.0",
-    "description": "Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (text spans or geometric regions) to normalized values and business concepts.",
+    "x-version": "0.8.0",
+    "description": "Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, or geometric regions) to normalized values and business concepts, and can record directed relations between entities.",
     "type": "object",
     "properties": {
         "unit": {
@@ -58,7 +58,7 @@
                 "properties": {
                     "id": {
                         "type": "string",
-                        "description": "A unique identifier for this entity instance (e.g. UUID).",
+                        "description": "A unique identifier for this entity instance (e.g. UUID). Required when 'relations' is not empty.",
                         "maxLength": 128
                     },
                     "concept": {
@@ -364,6 +364,96 @@
                 "additionalProperties": false
             }
         },
+        "relation_vocabulary_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the definition of the relation labels.",
+            "maxLength": 2048
+        },
+        "relation_vocabulary": {
+            "type": "array",
+            "description": "Allowed values for a relation's 'label'. For more than 100 labels, use 'relation_vocabulary_url'.",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "description": "A single valid relation label.",
+                "maxLength": 128
+            }
+        },
+        "relations": {
+            "type": "array",
+            "description": "Directed links between entities in this record. When not empty, every entity requires an 'id'.",
+            "maxItems": 100000,
+            "items": {
+                "type": "object",
+                "description": "A single relation, read as 'subject label object' (e.g. 'e2 quantity_of e1').",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "An identifier for this relation.",
+                        "maxLength": 128
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "The kind of relation (e.g. 'price_of', 'employed_by'). Must be a member of 'relation_vocabulary' when it is present.",
+                        "maxLength": 128
+                    },
+                    "subject_id": {
+                        "type": "string",
+                        "description": "The id of the entity the relation starts from. Must be the id of an entity in this record.",
+                        "maxLength": 128
+                    },
+                    "object_id": {
+                        "type": "string",
+                        "description": "The id of the entity the relation points to. Must be the id of an entity in this record.",
+                        "maxLength": 128
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "The text that states the relation, if any.",
+                        "maxLength": 4096
+                    },
+                    "score": {
+                        "type": "number",
+                        "description": "The confidence in this relation, from 0.0 (uncertain) to 1.0 (certain).",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "attributes": {
+                        "type": "object",
+                        "description": "Arbitrary metadata for this relation. Flat key-value pairs.",
+                        "maxProperties": 16,
+                        "propertyNames": {
+                            "maxLength": 128
+                        },
+                        "additionalProperties": {
+                            "anyOf": [
+                                {
+                                    "type": "string",
+                                    "maxLength": 1024
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "label",
+                    "subject_id",
+                    "object_id"
+                ],
+                "additionalProperties": false
+            }
+        },
         "attributes": {
             "type": "object",
             "description": "Arbitrary metadata relevant to this extraction.",
@@ -397,32 +487,24 @@
         {
             "if": {
                 "properties": {
-                    "entities": {
-                        "maxItems": 0
+                    "relations": {
+                        "minItems": 1
                     }
                 },
                 "required": [
-                    "entities"
+                    "relations"
                 ]
             },
             "then": {
-                "anyOf": [
-                    {
-                        "required": [
-                            "vocabulary"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "vocabulary_url"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "producer"
-                        ]
+                "properties": {
+                    "entities": {
+                        "items": {
+                            "required": [
+                                "id"
+                            ]
+                        }
                     }
-                ]
+                }
             }
         },
         {

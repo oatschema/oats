@@ -1,6 +1,7 @@
 {
   "unit": "per_mille",
   "producer": "Manual Review",
+  "score_explanation": "Reviewer confidence, where 1.0 is certain.",
   "vocabulary_url": "https://example.com/vocab/vehicles",
   "objects": [
     {
