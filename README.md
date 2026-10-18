@@ -12,6 +12,8 @@ These schemas are designed as a standalone open standard to decouple data produc
 
 OATS is not related to the W3C Web Annotation (formerly Open Annotation) data model.
 
+Browse every schema, with its fields, rules and examples, at **[oatschema.org](https://oatschema.org)**.
+
 ## Why OATS?
 
 Data pipelines are brittle when every tool defines its own output format. **OATS** provides a single, predictable standard, decoupling producers (models, scripts) from consumers (databases, UIs).
@@ -56,61 +58,73 @@ Always use the versioned `$id` form when referencing a schema from data or code.
 
 ### `audio-transcription`
 Store text transcribed from an audio source, supporting timed segments, speaker identification, and non-verbal events.
+* [**Docs**](https://oatschema.org/docs/schemas/audio-transcription)
 * [**View Schema**](./schemas/audio-transcription.json)
 * [**View Example Record**](./reference/examples/positive/audio-transcription-1.json)
 
 ### `classification`
 Represent classification results, including predicted labels, normalized scoring, and references to the taxonomy or vocabulary.
+* [**Docs**](https://oatschema.org/docs/schemas/classification)
 * [**View Schema**](./schemas/classification.json)
 * [**View Example Record**](./reference/examples/positive/classification-1.json)
 
 ### `document-extraction`
 Represent the layout and content of a document, including text blocks, geometric coordinates (boxes, polygons and multi-polygons), and page structure.
+* [**Docs**](https://oatschema.org/docs/schemas/document-extraction)
 * [**View Schema**](./schemas/document-extraction.json)
 * [**View Example Record**](./reference/examples/positive/document-extraction-1.json)
 
 ### `embedding`
 Store a vector embedding, including the high-dimensional feature vector and metadata about the model used to generate it.
+* [**Docs**](https://oatschema.org/docs/schemas/embedding)
 * [**View Schema**](./schemas/embedding.json)
 * [**View Example Record**](./reference/examples/positive/embedding-dense.json)
 
 ### `entity-extraction`
 Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, or geometric regions) to normalized values and business concepts, and can record directed relations between entities (e.g. which price belongs to which line item).
+* [**Docs**](https://oatschema.org/docs/schemas/entity-extraction)
 * [**View Schema**](./schemas/entity-extraction.json)
 * [**View Example Record**](./reference/examples/positive/entity-extraction-1.json)
 
 ### `generic`
 Store arbitrary key-value data in a strictly typed structure to prevent uncontrolled nesting.
+* [**Docs**](https://oatschema.org/docs/schemas/generic)
 * [**View Schema**](./schemas/generic.json)
 * [**View Example Record**](./reference/examples/positive/generic-1.json)
 
 ### `geolocation`
 Represent a geographic feature using a strict, safe subset of GeoJSON (RFC 7946) optimized for predictable parsing. Restricts the root to a single 'Feature', supports every fixed-depth geometry (Point, LineString, Polygon and their Multi- variants), enforces WGS 84 coordinate ranges, and disallows recursive collections.
+* [**Docs**](https://oatschema.org/docs/schemas/geolocation)
 * [**View Schema**](./schemas/geolocation.json)
 * [**View Example Record**](./reference/examples/positive/geolocation-1.json)
 
 ### `llm-output`
 Store the full context of a single atomic Large Language Model (LLM) interaction, including the input prompt, generation parameters, and raw output and optional evaluation metrics.
+* [**Docs**](https://oatschema.org/docs/schemas/llm-output)
 * [**View Schema**](./schemas/llm-output.json)
 * [**View Example Record**](./reference/examples/positive/llm-output-1.json)
 
 ### `object-detection`
 Represent objects detected within a file, supporting bounding boxes, polygons, multi-polygons, hierarchical relationships (parent/child), and normalized scoring.
+* [**Docs**](https://oatschema.org/docs/schemas/object-detection)
 * [**View Schema**](./schemas/object-detection.json)
 * [**View Example Record**](./reference/examples/positive/object-detection-1.json)
 
 ### `ranking`
 Represent a ranked list of items related to a query, such as search results, retrieved passages, recommendations or near-duplicate matches. Each result carries a rank, an identifier and an optional normalized score.
+* [**Docs**](https://oatschema.org/docs/schemas/ranking)
 * [**View Schema**](./schemas/ranking.json)
 * [**View Example Record**](./reference/examples/positive/ranking-1.json)
 
 ### `regression`
 Represent continuous numerical predictions. Supports point estimates, confidence intervals, and time-series forecasting.
+* [**Docs**](https://oatschema.org/docs/schemas/regression)
 * [**View Schema**](./schemas/regression.json)
 * [**View Example Record**](./reference/examples/positive/regression-1.json)
 
 ### `temporal-segmentation`
 Represent labelled time intervals within a media source, such as chapters, scenes, shots, speaker turns or detected events. Segments may overlap, may nest via parent references, and need not cover the whole source.
+* [**Docs**](https://oatschema.org/docs/schemas/temporal-segmentation)
 * [**View Schema**](./schemas/temporal-segmentation.json)
 * [**View Example Record**](./reference/examples/positive/temporal-segmentation-1.json)
 
@@ -134,7 +148,15 @@ This runs three groups of tests:
 
 ## How to Use These Schemas
 
-These schemas can be used with any JSON Schema validation tool. The Python example below uses the [`jsonschema-rs`](https://github.com/Stranger6667/jsonschema/tree/master/crates/jsonschema-py) library:
+The schemas are bundled for Python, JavaScript and Rust, exactly as released, so validation never needs the network:
+
+| Language | Install | Guide |
+| :--- | :--- | :--- |
+| Python | `pip install 'oatschema[validate]'` | [oatschema.org/docs/python](https://oatschema.org/docs/python) |
+| JavaScript | `npm install oatschema` | [oatschema.org/docs/javascript](https://oatschema.org/docs/javascript) |
+| Rust | `cargo add oatschema` | [oatschema.org/docs/rust](https://oatschema.org/docs/rust) |
+
+The schemas also work with any JSON Schema draft 2020-12 validation tool. The Python example below uses the [`jsonschema-rs`](https://github.com/Stranger6667/jsonschema/tree/master/crates/jsonschema-py) library:
 
 ```python
 import json
