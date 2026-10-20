@@ -44,9 +44,22 @@ If you have an idea for a new, generic schema that would be valuable to the comm
 
 ### Releasing (maintainers)
 
-1.  Bump `version` in `pyproject.toml`, the `"x-version"` field of every schema, and the version in every schema's `$id` (`https://oatschema.org/<version>/<name>`). The tests enforce that they match. Add an entry to `CHANGELOG.md`, headed `## vX.Y.Z (YYYY-MM-DD)` with the release date.
-    * In the first release of a new year, also update the end year of the copyright notice: in every schema's `x-license`, in `LICENSE` in `tests/test_schemas.py`, and in the SPDX headers.
-2.  From v1.0.0, once the release is published, copy every file in `schemas/` to `reference/schemas/<released-version>/`. That snapshot becomes the baseline for the next release's backward-compatibility tests.
+A release is an annotated tag, `vX.Y.Z`, on `main`. oatschema.org and the official packages copy their schemas and the changelog from the tag, so it must be right before it is pushed.
+
+1.  In the release pull request:
+    * bump `version` in `pyproject.toml`, the `"x-version"` field of every schema, and the version in every schema's `$id` (`https://oatschema.org/<version>/<name>`), then run `uv lock`;
+    * add an entry at the top of `CHANGELOG.md`, headed `## vX.Y.Z (YYYY-MM-DD)` with the release date. Entries already released keep their date and text;
+    * in the first release of a new year, update the end year of the copyright notice: in every schema's `x-license`, in `LICENSE` in `tests/test_schemas.py`, and in the SPDX headers;
+    * mention any JSON Schema keyword that no earlier release used.
+
+    Run the tests with the tags fetched (`git fetch --tags`): `tests/test_release.py` checks the versions and the changelog against the working tree and every earlier tag.
+2.  Once it is merged and CI has passed, tag the merge commit and push the tag:
+    ```
+    git tag -a vX.Y.Z -m "Release version X.Y.Z" <merge-commit>
+    git push origin vX.Y.Z
+    ```
+    Never move or delete a pushed tag. Fix a bad release with a new patch release.
+3.  From v1.0.0, once the release is published, copy every file in `schemas/` to `reference/schemas/<released-version>/`. That snapshot becomes the baseline for the next release's backward-compatibility tests.
 
 ## Licensing and Sign-off
 

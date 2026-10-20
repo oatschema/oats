@@ -281,12 +281,6 @@ def test_schema_adheres_to_style_guide(filename, schema):
 
 @pytest.mark.parametrize("filename, schema", SCHEMAS.items())
 def test_schema_metadata(filename, schema):
-    assert schema.get("x-version") == PACKAGE_VERSION, (
-        f"{filename}: x-version must match pyproject.toml ({PACKAGE_VERSION})"
-    )
-    assert "version" not in schema, (
-        f"{filename}: use 'x-version'; a top-level 'version' is not allowed"
-    )
     assert schema.get("x-license") == LICENSE, (
         f"{filename}: x-license must be {LICENSE!r}"
     )

@@ -140,10 +140,11 @@ We recommend [`uv`](https://docs.astral.sh/uv/) for dependency management.
 uv run pytest
 ```
 
-This runs three groups of tests:
+This runs four groups of tests:
 
 * **Examples** (`tests/test_examples.py`): every file in `reference/examples/positive/` must validate, and every file in `reference/examples/negative/` must fail at the location and with the message recorded in `reference/examples/negative-expectations.json`.
-* **Schemas** (`tests/test_schemas.py`): every schema must be valid JSON Schema 2020-12, follow the [Style Guide](./STYLEGUIDE.md), and carry the suite version from `pyproject.toml`.
+* **Schemas** (`tests/test_schemas.py`): every schema must be valid JSON Schema 2020-12, follow the [Style Guide](./STYLEGUIDE.md), and carry the suite version from `pyproject.toml` in its `$id`.
+* **Releases** (`tests/test_release.py`): every schema carries the suite version in `x-version`, and `CHANGELOG.md` has a `## vX.Y.Z (YYYY-MM-DD)` entry for that version and for every existing release tag, listed newest first. See "Releasing" in [CONTRIBUTING.md](./CONTRIBUTING.md#releasing-maintainers).
 * **Backward compatibility** (`tests/test_backward_compatability.py`): from v1.0.0, every schema is compared against the latest release in `reference/schemas/<version>/`, and any change that could reject previously valid data fails. Changed schemas are also fuzzed with [`hypothesis-jsonschema`](https://github.com/python-jsonschema/hypothesis-jsonschema). Until a v1.0.0 snapshot exists, these tests are skipped.
 
 ## How to Use These Schemas
