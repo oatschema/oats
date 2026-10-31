@@ -15,7 +15,7 @@ PYPROJECT = REPO_ROOT / "pyproject.toml"
 
 PACKAGE_VERSION = tomllib.loads(PYPROJECT.read_text())["project"]["version"]
 ID_FORMAT = "https://oatschema.org/{version}/{name}"
-RESERVED_NAMES = {"changelog", "docs", "latest"}
+RESERVED_NAMES = {"changelog", "docs", "latest", "tools"}
 ROOT_KEY_ORDER = ["x-license", "$schema", "$id", "title", "x-version", "description"]
 LICENSE = {
     "id": "Apache-2.0",
@@ -293,13 +293,37 @@ def test_schema_metadata(filename, schema):
     )
 
 
+def name_violations(filename: str) -> list[str]:
+    name = Path(filename).stem
+    errors = []
+    if name[:1].isdigit():
+        errors.append(f"{filename}: schema names must not start with a digit")
+    if name in RESERVED_NAMES:
+        errors.append(f"{filename}: '{name}' is a reserved name")
+    return errors
+
+
 @pytest.mark.parametrize("filename", SCHEMAS)
 def test_schema_name_is_not_reserved(filename):
-    name = Path(filename).stem
-    assert not name[:1].isdigit(), (
-        f"{filename}: schema names must not start with a digit"
-    )
-    assert name not in RESERVED_NAMES, f"{filename}: '{name}' is a reserved name"
+    errors = name_violations(filename)
+    assert not errors, "\n".join(errors)
+
+
+@pytest.mark.parametrize("name", sorted(RESERVED_NAMES))
+def test_name_check_rejects_reserved(name):
+    assert name_violations(f"{name}.json") == [
+        f"{name}.json: '{name}' is a reserved name"
+    ]
+
+
+def test_name_check_rejects_leading_digit():
+    assert name_violations("3d-detection.json") == [
+        "3d-detection.json: schema names must not start with a digit"
+    ]
+
+
+def test_name_check_accepts_tool_like_names():
+    assert name_violations("tool-call.json") == []
 
 
 @pytest.mark.parametrize("filename, schema", SCHEMAS.items())
