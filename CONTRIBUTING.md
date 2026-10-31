@@ -29,7 +29,7 @@ If you have an idea for a new, generic schema that would be valuable to the comm
 ## Pull Request Process
 
 1.  **Fork the repository** and create your branch from `main`.
-2.  **Add your new schema file** to the `/schemas` directory, following the `schema-name.json` naming convention. Name the schema after its task (e.g. `classification`, `object-detection`). A name must not start with a digit, and must not be `changelog`, `docs` or `latest`, because the website serves schema names, version numbers and its own pages side by side. Start the file with the standard `x-license` and `x-version` metadata described in the [Style Guide](./STYLEGUIDE.md#schema-metadata).
+2.  **Add your new schema file** to the `/schemas` directory, following the `schema-name.json` naming convention. Name the schema after its task (e.g. `classification`, `object-detection`). A name must not start with a digit, and must not be `changelog`, `docs`, `latest` or `tools`, because the website serves schema names, version numbers and its own pages side by side (its tools live under `/tools/…`). Start the file with the standard `x-license` and `x-version` metadata described in the [Style Guide](./STYLEGUIDE.md#schema-metadata).
 3.  **Add Examples:** Examples are matched to schemas by filename prefix, so start every example's filename with the schema name.
     * Add at least one valid example to `reference/examples/positive/schema-name-1.json`.
     * Add at least one invalid example to `reference/examples/negative/schema-name-<what-it-breaks>.json` to demonstrate constraint enforcement. Each negative example should break exactly one rule.
