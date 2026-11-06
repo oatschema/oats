@@ -5,9 +5,9 @@
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.8.0/geolocation",
+    "$id": "https://oatschema.org/0.9.0/geolocation",
     "title": "Geolocation",
-    "x-version": "0.8.0",
+    "x-version": "0.9.0",
     "description": "Represent a geographic feature. Defines a subset of GeoJSON (RFC 7946) optimized for predictable parsing and indexing. It restricts the root to a single 'Feature', supports all fixed-depth geometries (Point, Polygon, Multi-types), and enforces flat properties to prevent recursion and nesting attacks.",
     "type": "object",
     "properties": {
@@ -23,7 +23,9 @@
                     "maxLength": 128
                 },
                 {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
                 }
             ]
         },
@@ -279,7 +281,9 @@
                 },
                 {
                     "type": "number",
-                    "description": "Altitude in meters above the WGS 84 ellipsoid."
+                    "description": "Altitude in meters above the WGS 84 ellipsoid.",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
                 }
             ],
             "items": false,
@@ -317,7 +321,9 @@
             "type": "array",
             "description": "A bounding box (RFC 7946, Section 5): 4 values for 2D or 6 values for 3D.",
             "items": {
-                "type": "number"
+                "type": "number",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
             },
             "anyOf": [
                 {
@@ -340,7 +346,9 @@
                     "maxLength": 2048
                 },
                 {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
                 },
                 {
                     "type": "boolean"
@@ -358,7 +366,9 @@
                                 "maxLength": 1024
                             },
                             {
-                                "type": "number"
+                                "type": "number",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
                             },
                             {
                                 "type": "boolean"
@@ -379,7 +389,9 @@
                                 "maxLength": 2048
                             },
                             {
-                                "type": "number"
+                                "type": "number",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
                             },
                             {
                                 "type": "boolean"

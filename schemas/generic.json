@@ -5,9 +5,9 @@
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.8.0/generic",
+    "$id": "https://oatschema.org/0.9.0/generic",
     "title": "Generic",
-    "x-version": "0.8.0",
+    "x-version": "0.9.0",
     "description": "A flexible schema for storing arbitrary key-value data.",
     "type": "object",
     "properties": {
@@ -35,7 +35,9 @@
                         "maxLength": 1024
                     },
                     {
-                        "type": "number"
+                        "type": "number",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
                     },
                     {
                         "type": "boolean"
