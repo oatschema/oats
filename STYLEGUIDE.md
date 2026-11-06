@@ -4,10 +4,10 @@ Where possible, OATS schemas adhere to these design patterns.
 
 ### 1. Consistent Constraints
 
-  * **No Unbounded Structures:** Every `string` must have a `maxLength`. Every `array` must have a `maxItems`. Every open object (one that does not set `additionalProperties: false`) must have a `maxProperties` and must limit its key length with `"propertyNames": { "maxLength": 128 }`.
+  * **No Unbounded Structures:** Every `string` must have a `maxLength`. Every `array` must have a `maxItems`. Every `integer` and `number` must have a lower and an upper bound within ±9007199254740991 (see Number Range). Every open object (one that does not set `additionalProperties: false`) must have a `maxProperties` and must limit its key length with `"propertyNames": { "maxLength": 128 }`.
   * **No Additional Properties:** Objects with `properties` must set `additionalProperties` to `false`. Use the standard `attributes` pattern for extensibility.
   * **No Unbounded Nesting:** Schemas must have a fixed depth. Self-references (`"$ref": "#"`) and recursive `$defs` are forbidden.
-  * **No Type Lists:** Write `"anyOf": [{ "type": "string", "maxLength": 128 }, { "type": "integer" }]` rather than `"type": ["string", "integer"]`, so that each type carries its own constraints.
+  * **No Type Lists:** Write `"anyOf": [{ "type": "string", "maxLength": 128 }, { "type": "integer", "minimum": 0, "maximum": 9007199254740991 }]` rather than `"type": ["string", "integer"]`, so that each type carries its own constraints.
 
 #### String Length Tiers
 
@@ -23,6 +23,14 @@ Choose a string's `maxLength` from this table rather than inventing a new limit.
 | `4096` | A single unit of extracted text | a block, segment or entity `text` |
 | `262144` | Long input text | `prompt`, `system_prompt` |
 | `524288` | Long output text | `response_data`, a full transcription `text` |
+
+#### Number Range
+
+Every `integer` and `number` has a lower bound (`minimum` or `exclusiveMinimum`) and an upper bound (`maximum` or `exclusiveMaximum`) within ±9007199254740991. Every bound is a value a double holds exactly (`0.5`, not `0.1`), so it means the same number to every validator. Fields whose meaning calls for a tighter range keep it, as scores and latitude do.
+
+**Rationale**: Some JSON parsers read numbers as doubles (JavaScript); others hold integers exactly (Python). Within this range, implementations agree exactly on every integer, so integers get the same verdict everywhere. Above it, the same text can be read as different numbers: JavaScript reads `9007199254740993` as `9007199254740992`. This is the range [RFC 8259 §6](https://www.rfc-editor.org/rfc/rfc8259#section-6) calls interoperable and [I-JSON (RFC 7493) §2.2](https://www.rfc-editor.org/rfc/rfc7493#section-2.2) recommends. A number written with more precision, or a smaller magnitude, than a double holds, such as `1.00000000000000001` or `1e-400`, is rounded by some readers and not by others; I-JSON says not to send them. `NaN` and `Infinity` are not JSON.
+
+An integer that can exceed the range uses a string form (see Large Integers).
 
 ### 2. Common Patterns
 
@@ -77,7 +85,7 @@ Depending on the schema, it may also make sense to add attributes to individual 
     "additionalProperties": {
         "anyOf": [
             { "type": "string", "maxLength": 1024 },
-            { "type": "number" },
+            { "type": "number", "minimum": -9007199254740991, "maximum": 9007199254740991 },
             { "type": "boolean" },
             { "type": "null" }
         ]
@@ -95,6 +103,19 @@ Identifier fields (`id`, and any field ending in `_id` such as `parent_id` or `t
 "group_id": {
     "type": "string",
     "description": "An identifier for the entity this segment belongs to.",
+    "maxLength": 128
+}
+```
+
+#### Large Integers
+
+An integer that can exceed the Number Range, such as a sampling seed, is a string in canonical base-10 form. Each value has exactly one spelling, so two values are equal exactly when their strings are equal. The field takes only the string, never a number as well, for the same reason as Identifiers.
+
+```json
+"seed": {
+    "type": "string",
+    "description": "The seed used for sampling, as a base-10 integer with no leading zeros (e.g. '42', '-7', '18446744073709551615').",
+    "pattern": "^(0|-?[1-9][0-9]*)$",
     "maxLength": 128
 }
 ```
@@ -155,7 +176,9 @@ Some rules relate two values, such as an end time that must not be earlier than 
 ```json
 "end_time": {
     "type": "number",
-    "description": "Segment end time in seconds. Must not be earlier than start_time."
+    "description": "Segment end time in seconds. Must not be earlier than start_time.",
+    "minimum": 0,
+    "maximum": 9007199254740991
 }
 ```
 
@@ -172,9 +195,9 @@ Non-standard keywords carry the `x-` prefix, so validators treat them as annotat
   }
   ```
   The tests hold the expected notice (`LICENSE` in `tests/test_schemas.py`) and check every schema against it.
-* **`x-version`**: the release the schema belongs to (e.g. `"0.8.0"`), equal to the `version` in `pyproject.toml` and to the version in the schema's `$id`.
+* **`x-version`**: the release the schema belongs to (e.g. `"0.9.0"`), equal to the `version` in `pyproject.toml` and to the version in the schema's `$id`.
 
-A schema must not contain a top-level `version` keyword. Releases up to v0.7.0 used `version` (and a Dorsal Hub LTD notice); released files are never edited, so they keep it. Tools that read a schema's version should read `x-version`, falling back to `version` for those older releases.
+A schema must not contain a top-level `version` keyword. Releases up to v0.7.0 used `version` (and an earlier copyright notice); released files are never edited, so they keep it. Tools that read a schema's version should read `x-version`, falling back to `version` for those older releases.
 
 #### Common Field Locations
 
@@ -206,3 +229,4 @@ While we support the 2020-12 spec, we specifically disallow specific features of
 ### 4. Exceptions
 
 - **`geolocation`**: This schema implements a subset of GeoJSON ([RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)). For this reason it does not include the `attributes` field, as GeoJSON already defines `properties` with a similar function. Its objects also accept RFC 7946 foreign members, so they are open objects (bounded by `maxProperties` and `propertyNames`) rather than setting `additionalProperties: false`.
+- **Number Range**: no schema is exempt, `geolocation` included. Its altitude, `bbox`, feature `id` and foreign members are bounded like every other number.

@@ -19,6 +19,10 @@
     "path": "/duration",
     "message": "is less than the minimum"
   },
+  "classification-attribute-above-range.json": {
+    "path": "/attributes/sample_count",
+    "message": "is not valid under any of the schemas"
+  },
   "classification-bad-attributes.json": {
     "path": "/labels/0/attributes/illegal_nested_data",
     "message": "is not valid under any of the schemas"
@@ -55,6 +59,10 @@
     "path": "",
     "message": "\"unit\" is a required property"
   },
+  "document-extraction-page-above-range.json": {
+    "path": "/page_width",
+    "message": "is not valid under any of the schemas"
+  },
   "document-extraction-unknown-block.json": {
     "path": "/blocks/0/block_type",
     "message": "is not one of"
@@ -79,6 +87,14 @@
     "path": "",
     "message": "\"unit\" is a required property"
   },
+  "entity-extraction-block-range-missing-end-block.json": {
+    "path": "/entities/0/location/0",
+    "message": "is not valid under any of the schemas"
+  },
+  "entity-extraction-block-range-negative-offset.json": {
+    "path": "/entities/0/location/0",
+    "message": "is not valid under any of the schemas"
+  },
   "entity-extraction-missing-label.json": {
     "path": "/entities/0",
     "message": "\"label\" is a required property"
@@ -98,6 +114,10 @@
   "entity-extraction-score-out-of-range.json": {
     "path": "/entities/0/score",
     "message": "is greater than the maximum"
+  },
+  "entity-extraction-span-end-block-id.json": {
+    "path": "/entities/0/location/0",
+    "message": "is not valid under any of the schemas"
   },
   "entity-extraction-span-missing-end.json": {
     "path": "/entities/0/location/0",
@@ -143,6 +163,10 @@
     "path": "",
     "message": "\"model\" is a required property"
   },
+  "llm-output-numeric-seed.json": {
+    "path": "/generation_params/seed",
+    "message": "is not of type \"string\""
+  },
   "object-detection-invalid-polygon.json": {
     "path": "/objects/0/polygon",
     "message": "has less than"
@@ -158,6 +182,10 @@
   "ranking-missing-id.json": {
     "path": "/results/0",
     "message": "\"id\" is a required property"
+  },
+  "ranking-rank-above-range.json": {
+    "path": "/results/0/rank",
+    "message": "is greater than the maximum"
   },
   "ranking-rank-zero.json": {
     "path": "/results/0/rank",

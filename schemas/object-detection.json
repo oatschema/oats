@@ -5,9 +5,9 @@
         "url": "https://github.com/oatschema/oats/blob/main/LICENSE"
     },
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://oatschema.org/0.8.0/object-detection",
+    "$id": "https://oatschema.org/0.9.0/object-detection",
     "title": "Object Detection",
-    "x-version": "0.8.0",
+    "x-version": "0.9.0",
     "description": "Represent objects detected within a source. Supports bounding boxes, polygons, hierarchical relationships, and confidence scores.",
     "type": "object",
     "properties": {
@@ -84,22 +84,26 @@
                             "x": {
                                 "type": "number",
                                 "description": "The x-coordinate of the top-left corner.",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 9007199254740991
                             },
                             "y": {
                                 "type": "number",
                                 "description": "The y-coordinate of the top-left corner.",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 9007199254740991
                             },
                             "width": {
                                 "type": "number",
                                 "description": "The width of the box.",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 9007199254740991
                             },
                             "height": {
                                 "type": "number",
                                 "description": "The height of the box.",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 9007199254740991
                             }
                         },
                         "required": [
@@ -122,12 +126,14 @@
                                 "x": {
                                     "type": "number",
                                     "description": "The x-coordinate of the vertex.",
-                                    "minimum": 0
+                                    "minimum": 0,
+                                    "maximum": 9007199254740991
                                 },
                                 "y": {
                                     "type": "number",
                                     "description": "The y-coordinate of the vertex.",
-                                    "minimum": 0
+                                    "minimum": 0,
+                                    "maximum": 9007199254740991
                                 }
                             },
                             "required": [
@@ -154,12 +160,14 @@
                                     "x": {
                                         "type": "number",
                                         "description": "The x-coordinate of the vertex.",
-                                        "minimum": 0
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
                                     },
                                     "y": {
                                         "type": "number",
                                         "description": "The y-coordinate of the vertex.",
-                                        "minimum": 0
+                                        "minimum": 0,
+                                        "maximum": 9007199254740991
                                     }
                                 },
                                 "required": [
@@ -184,7 +192,9 @@
                                     "maxLength": 1024
                                 },
                                 {
-                                    "type": "number"
+                                    "type": "number",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
                                 },
                                 {
                                     "type": "boolean"
@@ -233,7 +243,9 @@
                         "maxLength": 1024
                     },
                     {
-                        "type": "number"
+                        "type": "number",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
                     },
                     {
                         "type": "boolean"

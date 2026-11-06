@@ -8,7 +8,7 @@
 
 It provides a **unified contract** for many common data engineering tasks, standardizing outputs whatever their source.
 
-These schemas are designed as a standalone open standard to decouple data producers from downstream consumers. They are used in production by [DorsalHub](https://dorsalhub.com) to structure and validate user-contributed file annotations.
+These schemas are designed as a standalone open standard to decouple data producers from downstream consumers.
 
 OATS is not related to the W3C Web Annotation (formerly Open Annotation) data model.
 
@@ -24,6 +24,7 @@ We enforce a "strict by default" philosophy.
 
 * **Source-Agnostic:** A **classification** result can be structured and validated in the same way, whether it comes from a BERT model, a rule-based regex script, or a human reviewer.
 * **Strict & Safe:** Schemas prevent arbitrary property nesting and enforce length limits, making them safe for databases and indexing.
+* **The Same Numbers Everywhere:** Every number is bounded within ±(2^53−1), so every integer is read exactly, and validated the same way, by every JSON implementation ([RFC 8259 §6](https://www.rfc-editor.org/rfc/rfc8259#section-6)).
 * **Backward-compatible:** From v1.0.0, all schema evolutions are strictly additive: any JSON payload which validates against a release will validate against all future releases of that schema. Releases before v1.0.0 are works in progress and may contain breaking changes.
 * **Interoperable:** A unified shape for common tasks, ensuring downstream tools don't need custom parsers for every new model version.
 * **Community-Driven:** This repository is the central place to discuss improvements and propose new schemas for common data shapes.
@@ -45,14 +46,14 @@ Because of our commitment to **Backward Compatibility**, from v1.0.0 upgrading t
 
 ### Schema Identifiers
 
-Every schema's `$id` has the form `https://oatschema.org/<version>/<name>`, for example `https://oatschema.org/0.8.0/classification`. Because each release has its own `$id`s, several versions of a schema can be loaded into one JSON Schema registry side by side.
+Every schema's `$id` has the form `https://oatschema.org/<version>/<name>`, for example `https://oatschema.org/0.9.0/classification`. Because each release has its own `$id`s, several versions of a schema can be loaded into one JSON Schema registry side by side.
 
 The website also resolves two convenience forms:
 
 * `https://oatschema.org/<name>` serves the latest release of a schema.
 * `https://oatschema.org/<name>?version=<version>` serves a specific release.
 
-Always use the versioned `$id` form when referencing a schema from data or code. Releases up to v0.6.0 used `https://dorsalhub.com/schemas/open/<name>` identifiers, and keep them.
+Always use the versioned `$id` form when referencing a schema from data or code. Releases up to v0.6.0 used an earlier identifier form, and keep it.
 
 ## Available Schemas
 
@@ -81,7 +82,7 @@ Store a vector embedding, including the high-dimensional feature vector and meta
 * [**View Example Record**](./reference/examples/positive/embedding-dense.json)
 
 ### `entity-extraction`
-Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, or geometric regions) to normalized values and business concepts, and can record directed relations between entities (e.g. which price belongs to which line item).
+Represent named entities, structural slots, or visual concepts extracted from unstructured data. Links raw evidence (character-offset text spans, document blocks, ranges of blocks, or geometric regions) to normalized values and business concepts, and can record directed relations between entities (e.g. which price belongs to which line item).
 * [**Docs**](https://oatschema.org/docs/schemas/entity-extraction)
 * [**View Schema**](./schemas/entity-extraction.json)
 * [**View Example Record**](./reference/examples/positive/entity-extraction-1.json)

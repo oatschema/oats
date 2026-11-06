@@ -4,6 +4,7 @@
 import json
 import tomllib
 from collections.abc import Iterator
+from decimal import Decimal
 from pathlib import Path
 
 import jsonschema_rs
@@ -49,6 +50,10 @@ FORBIDDEN_KEYWORDS = {
     "$recursiveAnchor",
 }
 SCORE_RANGES = {(0, 1), (-1, 1)}
+NUMBER_LIMIT = 2**53 - 1
+NUMBER_TYPES = {"integer", "number"}
+LOWER_BOUNDS = ("minimum", "exclusiveMinimum")
+UPPER_BOUNDS = ("maximum", "exclusiveMaximum")
 
 MAP_KEYWORDS = ("properties", "patternProperties", "$defs", "dependentSchemas")
 SINGLE_KEYWORDS = (
@@ -127,6 +132,59 @@ def types_of(node: dict) -> list[str]:
     return t if isinstance(t, list) else [t]
 
 
+def is_number(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def in_number_range(value) -> bool:
+    return abs(value) <= NUMBER_LIMIT and (
+        isinstance(value, int) or Decimal(value) == Decimal(repr(value))
+    )
+
+
+def numbers_in(value) -> Iterator:
+    if is_number(value):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from numbers_in(item)
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from numbers_in(item)
+
+
+def number_violations(path: str, node: dict, overlay: bool) -> list[str]:
+    """Return violations of the Number Range rule for one subschema."""
+    errors = []
+    for keyword in LOWER_BOUNDS + UPPER_BOUNDS:
+        if keyword in node and not (
+            is_number(node[keyword]) and in_number_range(node[keyword])
+        ):
+            errors.append(
+                f"{path}: '{keyword}' must be a value a double holds exactly, within ±{NUMBER_LIMIT}."
+            )
+    values = node.get("enum", []) + ([node["const"]] if "const" in node else [])
+    for value in numbers_in(values):
+        if abs(value) > NUMBER_LIMIT:
+            errors.append(
+                f"{path}: {value} in 'const'/'enum' is outside ±{NUMBER_LIMIT}."
+            )
+    if overlay:
+        return errors
+    numeric = bool(NUMBER_TYPES & set(types_of(node)))
+    if numeric and not (
+        any(k in node for k in LOWER_BOUNDS) and any(k in node for k in UPPER_BOUNDS)
+    ):
+        errors.append(
+            f"{path}: Numbers must have a lower and an upper bound within ±{NUMBER_LIMIT}."
+        )
+    if not numeric and any(k in node for k in LOWER_BOUNDS + UPPER_BOUNDS):
+        errors.append(
+            f"{path}: Numeric bounds must sit next to 'type': 'integer' or 'number'."
+        )
+    return errors
+
+
 def style_violations(filename: str, schema: dict) -> list[str]:
     errors = []
     defs = schema.get("$defs", {})
@@ -151,6 +209,8 @@ def style_violations(filename: str, schema: dict) -> list[str]:
             errors.append(
                 f"{path}{location}: 'if' tests '{name}' without requiring it, so it holds whenever '{name}' is absent."
             )
+
+        errors.extend(number_violations(path, node, overlay))
 
         if overlay:
             continue
@@ -410,7 +470,7 @@ def test_shared_geometry_is_identical(field):
             "default",
             {
                 "type": "object",
-                "properties": {"a": {"type": "number", "default": 1}},
+                "properties": {"a": {"type": "boolean", "default": True}},
                 "additionalProperties": False,
             },
         ),
@@ -422,7 +482,7 @@ def test_shared_geometry_is_identical(field):
                 "additionalProperties": False,
             },
         ),
-        ("open object", {"type": "object", "properties": {"a": {"type": "number"}}}),
+        ("open object", {"type": "object", "properties": {"a": {"type": "boolean"}}}),
         (
             "attributes without maxProperties",
             {
@@ -431,7 +491,7 @@ def test_shared_geometry_is_identical(field):
                     "attributes": {
                         "type": "object",
                         "propertyNames": {"maxLength": 8},
-                        "additionalProperties": {"type": "number"},
+                        "additionalProperties": {"type": "boolean"},
                     }
                 },
                 "additionalProperties": False,
@@ -445,7 +505,7 @@ def test_shared_geometry_is_identical(field):
                     "attributes": {
                         "type": "object",
                         "maxProperties": 4,
-                        "additionalProperties": {"type": "number"},
+                        "additionalProperties": {"type": "boolean"},
                     }
                 },
                 "additionalProperties": False,
@@ -496,7 +556,7 @@ def test_shared_geometry_is_identical(field):
             "integer identifier",
             {
                 "type": "object",
-                "properties": {"id": {"type": "integer"}},
+                "properties": {"id": {"type": "integer", "minimum": 0, "maximum": 9}},
                 "additionalProperties": False,
             },
         ),
@@ -516,7 +576,7 @@ def test_shared_geometry_is_identical(field):
                     "parent_id": {
                         "anyOf": [
                             {"type": "string", "maxLength": 128},
-                            {"type": "integer"},
+                            {"type": "integer", "minimum": 0, "maximum": 9},
                         ]
                     }
                 },
@@ -524,10 +584,122 @@ def test_shared_geometry_is_identical(field):
             },
         ),
         (
+            "unbounded integer",
+            {
+                "type": "object",
+                "properties": {"a": {"type": "integer"}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "number without an upper bound",
+            {
+                "type": "object",
+                "properties": {"a": {"type": "number", "minimum": 0}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "bound of 2^53",
+            {
+                "type": "object",
+                "properties": {
+                    "a": {"type": "integer", "minimum": 0, "maximum": 2**53}
+                },
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "bound of 1e300",
+            {
+                "type": "object",
+                "properties": {"a": {"type": "number", "minimum": 0, "maximum": 1e300}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "bound a double does not hold exactly",
+            {
+                "type": "object",
+                "properties": {"a": {"type": "number", "minimum": 0, "maximum": 0.1}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "enum value outside the range",
+            {
+                "type": "object",
+                "properties": {"a": {"enum": [1, 2**53]}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "nested const value outside the range",
+            {
+                "type": "object",
+                "properties": {"a": {"const": {"b": [2**60]}}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "bound without a numeric type",
+            {
+                "type": "object",
+                "properties": {"a": {"maximum": 10}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "unbounded number in prefixItems",
+            {
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "array",
+                        "prefixItems": [{"type": "number"}],
+                        "items": False,
+                        "maxItems": 1,
+                    }
+                },
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "unbounded number in an anyOf branch",
+            {
+                "type": "object",
+                "properties": {"a": {"anyOf": [{"type": "null"}, {"type": "number"}]}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "unbounded number in $defs",
+            {
+                "type": "object",
+                "properties": {"a": {"$ref": "#/$defs/n"}},
+                "$defs": {"n": {"type": "number"}},
+                "additionalProperties": False,
+            },
+        ),
+        (
+            "out-of-range bound in a then",
+            {
+                "type": "object",
+                "properties": {
+                    "a": {"type": "boolean"},
+                    "b": {"type": "number", "minimum": 0, "maximum": 1},
+                },
+                "required": ["a"],
+                "if": {"properties": {"a": {"const": True}}},
+                "then": {"properties": {"b": {"maximum": 1e300}}},
+                "additionalProperties": False,
+            },
+        ),
+        (
             "if without required",
             {
                 "type": "object",
-                "properties": {"a": {"type": "number"}, "b": {"type": "number"}},
+                "properties": {"a": {"type": "boolean"}, "b": {"type": "boolean"}},
                 "if": {"properties": {"a": {"const": 1}}},
                 "then": {"required": ["b"]},
                 "additionalProperties": False,
@@ -537,7 +709,7 @@ def test_shared_geometry_is_identical(field):
             "if without required inside allOf",
             {
                 "type": "object",
-                "properties": {"a": {"type": "number"}, "b": {"type": "number"}},
+                "properties": {"a": {"type": "boolean"}, "b": {"type": "boolean"}},
                 "allOf": [
                     {
                         "if": {"properties": {"a": {"const": 1}}},
@@ -556,7 +728,7 @@ def test_style_lint_rejects(description, schema):
 def test_style_lint_ignores_property_named_default():
     schema = {
         "type": "object",
-        "properties": {"default": {"type": "number"}},
+        "properties": {"default": {"type": "boolean"}},
         "additionalProperties": False,
     }
     assert style_violations("probe.json", schema) == []
@@ -575,7 +747,10 @@ def test_style_lint_accepts_guarded_if(description, guard):
         condition["required"] = guard["if_required"]
     schema = {
         "type": "object",
-        "properties": {"a": {"type": "number"}, "b": {"type": "number"}},
+        "properties": {
+            "a": {"type": "integer", "minimum": 0, "maximum": 9},
+            "b": {"type": "boolean"},
+        },
         "required": guard.get("required", []),
         "allOf": [{"if": condition, "then": {"required": ["b"]}}],
         "additionalProperties": False,
@@ -583,3 +758,20 @@ def test_style_lint_accepts_guarded_if(description, guard):
     assert style_violations("probe.json", schema) == [], (
         f"Style lint rejected an if {description}"
     )
+
+
+@pytest.mark.parametrize(
+    "bounds",
+    [
+        {"exclusiveMinimum": 0, "maximum": 9007199254740991},
+        {"minimum": -9007199254740991, "maximum": 0.5},
+        {"minimum": -1, "exclusiveMaximum": 1},
+    ],
+)
+def test_style_lint_accepts_bounded_number(bounds):
+    schema = {
+        "type": "object",
+        "properties": {"a": {"type": "number", **bounds}},
+        "additionalProperties": False,
+    }
+    assert style_violations("probe.json", schema) == []
